@@ -1,30 +1,36 @@
-import * as React from 'react';
-import Avatar from '@mui/material/Avatar';
-import Button from '@mui/material/Button';
-import CssBaseline from '@mui/material/CssBaseline';
-import TextField from '@mui/material/TextField';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
-import Link from '@mui/material/Link';
-import Grid from '@mui/material/Grid';
-import Box from '@mui/material/Box';
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
-import Typography from '@mui/material/Typography';
-import Container from '@mui/material/Container';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
-import Alert from '@mui/material/Alert';
-import AlertTitle from '@mui/material/AlertTitle';
-import "./App.css"
+import * as React from "react";
+import Avatar from "@mui/material/Avatar";
+import Button from "@mui/material/Button";
+import CssBaseline from "@mui/material/CssBaseline";
+import TextField from "@mui/material/TextField";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import Checkbox from "@mui/material/Checkbox";
+import Grid from "@mui/material/Grid";
+import Box from "@mui/material/Box";
+import Link from "@mui/material/Link";
+import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
+import Typography from "@mui/material/Typography";
+import Container from "@mui/material/Container";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
+import Alert from "@mui/material/Alert";
+import AlertTitle from "@mui/material/AlertTitle";
+import "../App.css";
+import axios from "axios";
 
 function Copyright(props) {
   return (
-    <Typography variant="body2" color="text.secondary" align="center" {...props}>
-      {'Copyright © '}
+    <Typography
+      variant="body2"
+      color="text.secondary"
+      align="center"
+      {...props}
+    >
+      {"Copyright © "}
       <Link color="inherit" href="https://engineering-club.com/">
         Engineering Club
-      </Link>{' '}
+      </Link>{" "}
       {new Date().getFullYear()}
-      {'.'}
+      {"."}
     </Typography>
   );
 }
@@ -34,7 +40,7 @@ const theme = createTheme({
     MuiAlert: {
       styleOverrides: {
         root: {
-          backgroundColor: 'error',
+          backgroundColor: "error",
         },
       },
     },
@@ -44,8 +50,8 @@ const theme = createTheme({
 export default function SignIn() {
   const [error, setError] = React.useState(null);
   const [response, setResponse] = React.useState(null);
-  const [login, setLogin] = React.useState('');
-  const [password, setPassword] = React.useState('');
+  const [login, setLogin] = React.useState("");
+  const [password, setPassword] = React.useState("");
   const [showAlert, setShowAlert] = React.useState(false);
 
   const handleSubmit = (event) => {
@@ -55,39 +61,30 @@ export default function SignIn() {
       setShowAlert(true);
     }
     const user = { username: login, password: password };
-    fetch('http://192.168.68.185:5000/api/auth/login', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(user)
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw response;
-        }
-        return response.json();
+    axios
+      .post("http://192.168.68.185:5000/api/auth/login", user, {
+        headers: {
+          "Content-Type": "application/json",
+        },
       })
-      .then((user) => {
-        setResponse(user);
+      .then((response) => {
+        setResponse(response.data);
         setError(null);
       })
       .catch((error) => {
         setResponse(null);
-        if (error instanceof Response) {
-          error.json().then((errorMessage) => {
-            if (error.status >= 400) {
-              setError('Incorrect user data.');
-            } else if (error.status >= 500) {
-              setError('Server side error');
-            } else {
-              setError("Unknown error");
-            }
-            setShowAlert(true);
-            document.getElementById("password").value = "";
-          });
+        if (error.response) {
+          if (error.response.status >= 400) {
+            setError("Incorrect user data.");
+          } else if (error.response.status >= 500) {
+            setError("Server side error");
+          } else {
+            setError("Unknown error");
+          }
+          setShowAlert(true);
+          document.getElementById("password").value = "";
         } else {
-          setError(error);
+          setError(error.message);
         }
       });
   };
@@ -99,18 +96,23 @@ export default function SignIn() {
         <Box
           sx={{
             marginTop: 8,
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
           }}
         >
-          <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
+          <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
             <LockOutlinedIcon />
           </Avatar>
           <Typography component="h1" variant="h5">
             Sign in
           </Typography>
-          <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
+          <Box
+            component="form"
+            onSubmit={handleSubmit}
+            noValidate
+            sx={{ mt: 1 }}
+          >
             <TextField
               margin="normal"
               required
@@ -145,7 +147,7 @@ export default function SignIn() {
             >
               Sign In
             </Button>
-            <div class="alert-container">
+            <div className="alert-container">
               {showAlert && (
                 <Alert severity="error" className="alert">
                   <AlertTitle>Error</AlertTitle>
@@ -155,14 +157,12 @@ export default function SignIn() {
             </div>
             <Grid container>
               <Grid item xs>
-                <Link href="#" variant="body2">
-                  Forgot password?
-                </Link>
+                Forgot password?
               </Grid>
               <Grid item>
-                <Link href="#" variant="body2">
-                  {"Don't have an account? Sign Up"}
-                </Link>
+                <li>
+                  <Link href="/SignUp">Sign up</Link>
+                </li>
               </Grid>
             </Grid>
           </Box>
