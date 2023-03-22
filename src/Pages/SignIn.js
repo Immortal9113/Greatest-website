@@ -78,8 +78,9 @@ export default function SignIn() {
   };
 
   const handlePasswordChange = (event) => {
-    setPassword(event.target.value);
-    validatePassword();
+    const value = event.target.value;
+    setPassword(value);
+    validatePassword(value);
   };
 
   const validateEmail = (value) => {
@@ -91,11 +92,11 @@ export default function SignIn() {
     }
   };
 
-  const validatePassword = () => {
-    if (password.length < 7) {
-      setPasswordError("Password must be at least 8 characters");
-    } else {
+  const validatePassword = (value) => {
+    if (value.length >= 8 && value.length <= 32) {
       setPasswordError("");
+    } else {
+      setPasswordError("Password must be at least 8 characters");
     }
   };
 
@@ -191,6 +192,7 @@ export default function SignIn() {
                 Password
               </InputLabel>
               <OutlinedInput
+                inputProps={{ maxLength: 32 }}
                 id="outlined-adornment-password"
                 type={showPassword ? "text" : "password"}
                 onChange={handlePasswordChange}
