@@ -23,6 +23,7 @@ import OutlinedInput from "@mui/material/OutlinedInput";
 import InputLabel from "@mui/material/InputLabel";
 import "../App.css";
 import axios from "axios";
+import { DisabledByDefault } from "@mui/icons-material";
 
 function Copyright(props) {
   return (
@@ -100,16 +101,8 @@ export default function SignIn() {
   const signInDisabled = () => {
     if (emailError || passwordError) {
       return true;
-    } else {
-      return false;
     }
-  };
-  const handleSubmitValid = (e) => {
-    e.preventDefault();
-    validateEmail();
-    validatePassword();
-    signInDisabled();
-    // Handle form submission logic here
+    return false;
   };
 
   const handleSubmit = (event) => {
@@ -145,8 +138,6 @@ export default function SignIn() {
           setError(error.message);
         }
       });
-
-    const onChangeEmail = () => {};
   };
 
   return (
@@ -187,21 +178,16 @@ export default function SignIn() {
               onChange={handleEmailChange}
               onBlur={validateEmail}
             />
-            <TextField
-              error={passwordError}
-              helperText={passwordError}
+            <FormControl
+              variant="outlined"
               margin="normal"
               required
               fullWidth
-              name="password"
-              label="Password"
-              type={showPassword ? "text" : "password"}
-              id="password"
-              autoComplete="current-password"
+              error={passwordError}
+              helperText={passwordError}
               onChange={handlePasswordChange}
               onBlur={validatePassword}
-            />
-            <FormControl sx={{ m: 1, width: "25ch" }} variant="outlined">
+            >
               <InputLabel htmlFor="outlined-adornment-password">
                 Password
               </InputLabel>
@@ -228,7 +214,7 @@ export default function SignIn() {
               />
             </FormControl>
             <Button
-              disabled={signInDisabled()}
+              disabled={signInDisabled() ? true : false}
               type="submit"
               fullWidth
               variant="contained"
