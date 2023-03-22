@@ -36,7 +36,7 @@
 }
 
 .message {
-  margin-top: 16px;
+  margin: 5px;
 }
 
 .center {
@@ -49,19 +49,32 @@
 }
 
 .alert-container {
+  position: relative;
+  z-index: 1;
   display: flex;
-  justify-content: flex-end;
-  align-items: flex-start;
-  flex-wrap: wrap;
-  padding: 16px;
-  box-sizing: border-box;
-  position: fixed;
-  top: 0;
-  right: 0;
-  z-index: 0;
+  justify-content: center;
+  align-items: center;
+  margin-top: 50px;
+  text-align: auto;
 }
 
-.alert{
-  width: 340px;
-  margin: 0 0 16px 16px;
+.alert {
+  position: absolute; 
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  transition: transform 0.5s ease-in-out, opacity 0.5s ease-in-out;
+  margin: 0 auto;
+  opacity: 0;
+  z-index: 2;
+}
+
+.alert.show {
+  transform: translate(-50%, -50%);
+  opacity: 1;
+}
+
+.alert.hide {
+  transform: translate(-150%, -50%);
+  opacity: 0;
 }
