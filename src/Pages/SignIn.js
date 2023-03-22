@@ -17,23 +17,23 @@ import AlertTitle from "@mui/material/AlertTitle";
 import "../App.css";
 import axios from "axios";
 
-function Copyright(props) {
-  return (
-    <Typography
-      variant="body2"
-      color="text.secondary"
-      align="center"
-      {...props}
-    >
-      {"Copyright © "}
-      <Link color="inherit" href="https://engineering-club.com/">
-        Engineering Club
-      </Link>{" "}
-      {new Date().getFullYear()}
-      {"."}
-    </Typography>
-  );
-}
+// function Copyright(props) {
+//   return (
+//     <Typography
+//       variant="body2"
+//       color="text.secondary"
+//       align="center"
+//       {...props}
+//     >
+//       {"Copyright © "}
+//       <Link color="inherit" href="https://engineering-club.com/">
+//         Engineering Club
+//       </Link>{" "}
+//       {new Date().getFullYear()}
+//       {"."}
+//     </Typography>
+//   );
+// }
 
 const theme = createTheme({
   components: {
@@ -49,10 +49,19 @@ const theme = createTheme({
 
 export default function SignIn() {
   const [error, setError] = React.useState(null);
-  const [response, setResponse] = React.useState(null);
   const [login, setLogin] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [showAlert, setShowAlert] = React.useState(false);
+
+  const handlePasswordChange = (event) => {
+    setPassword(event.target.value);
+    setShowAlert(false);
+  };
+
+  const handleLoginChange = (event) => {
+    setLogin(event.target.value);
+    setShowAlert(false);
+  };
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -68,11 +77,9 @@ export default function SignIn() {
         },
       })
       .then((response) => {
-        setResponse(response.data);
         setError(null);
       })
       .catch((error) => {
-        setResponse(null);
         if (error.response) {
           if (error.response.status >= 400) {
             setError("Incorrect user data.");
@@ -122,7 +129,7 @@ export default function SignIn() {
               name="login"
               autoComplete="login"
               autoFocus
-              onChange={(event) => setLogin(event.target.value)}
+              onChange={handleLoginChange}
             />
             <TextField
               margin="normal"
@@ -133,7 +140,7 @@ export default function SignIn() {
               type="password"
               id="password"
               autoComplete="current-password"
-              onChange={(event) => setPassword(event.target.value)}
+              onChange={handlePasswordChange}
             />
             <FormControlLabel
               control={<Checkbox value="remember" color="primary" />}
@@ -147,14 +154,6 @@ export default function SignIn() {
             >
               Sign In
             </Button>
-            <div className="alert-container">
-              {showAlert && (
-                <Alert severity="error" className="alert">
-                  <AlertTitle>Error</AlertTitle>
-                  {error}
-                </Alert>
-              )}
-            </div>
             <Grid container>
               <Grid item xs>
                 Forgot password?
@@ -165,9 +164,16 @@ export default function SignIn() {
                 </li>
               </Grid>
             </Grid>
+            <div className="alert-container">
+              <div className={showAlert ? "alert show" : "alert hide"}>
+                <Alert severity="error" className="alert-content">
+                  <AlertTitle>Error</AlertTitle>
+                  {error}
+                </Alert>
+              </div>
+            </div>
           </Box>
         </Box>
-        <Copyright sx={{ mt: 8, mb: 4 }} />
       </Container>
     </ThemeProvider>
   );
