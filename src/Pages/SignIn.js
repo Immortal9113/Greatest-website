@@ -71,8 +71,9 @@ export default function SignIn() {
   };
 
   const handleEmailChange = (event) => {
-    setEmail(event.target.value);
-    validateEmail();
+    const value = event.target.value;
+    setEmail(value);
+    validateEmail(value);
   };
 
   const handlePasswordChange = (event) => {
@@ -80,9 +81,9 @@ export default function SignIn() {
     validatePassword();
   };
 
-  const validateEmail = () => {
+  const validateEmail = (value) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
+    if (!emailRegex.test(value)) {
       setEmailError("Invalid email address");
     } else {
       setEmailError("");
@@ -104,10 +105,6 @@ export default function SignIn() {
       return false;
     }
   };
-
-  // React.useEffect(() => {
-  //   checkDisableTrigger();
-  // }, [emailError, passwordError]);
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -180,7 +177,6 @@ export default function SignIn() {
               autoComplete="login"
               autoFocus
               onChange={handleEmailChange}
-              onBlur={validateEmail}
             />
             <FormControl
               variant="outlined"
@@ -197,7 +193,6 @@ export default function SignIn() {
                 id="outlined-adornment-password"
                 type={showPassword ? "text" : "password"}
                 onChange={handlePasswordChange}
-                onBlur={validatePassword}
                 endAdornment={
                   <InputAdornment position="end">
                     <IconButton
