@@ -23,7 +23,6 @@ import OutlinedInput from "@mui/material/OutlinedInput";
 import InputLabel from "@mui/material/InputLabel";
 import "../App.css";
 import axios from "axios";
-import { DisabledByDefault } from "@mui/icons-material";
 
 function Copyright(props) {
   return (
@@ -61,8 +60,8 @@ export default function SignIn() {
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [showAlert, setShowAlert] = React.useState(false);
-  const [emailError, setEmailError] = React.useState("");
-  const [passwordError, setPasswordError] = React.useState("");
+  const [emailError, setEmailError] = React.useState(false);
+  const [passwordError, setPasswordError] = React.useState(false);
   const [showPassword, setShowPassword] = React.useState(false);
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);
@@ -91,19 +90,24 @@ export default function SignIn() {
   };
 
   const validatePassword = () => {
-    if (password.length < 8) {
+    if (password.length < 7) {
       setPasswordError("Password must be at least 8 characters");
     } else {
       setPasswordError("");
     }
   };
 
-  const signInDisabled = () => {
-    if (emailError || passwordError) {
+  const checkDisableTrigger = () => {
+    if (emailError || passwordError || !password || !email) {
       return true;
+    } else {
+      return false;
     }
-    return false;
   };
+
+  // React.useEffect(() => {
+  //   checkDisableTrigger();
+  // }, [emailError, passwordError]);
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -185,8 +189,6 @@ export default function SignIn() {
               fullWidth
               error={passwordError}
               helperText={passwordError}
-              onChange={handlePasswordChange}
-              onBlur={validatePassword}
             >
               <InputLabel htmlFor="outlined-adornment-password">
                 Password
@@ -194,6 +196,8 @@ export default function SignIn() {
               <OutlinedInput
                 id="outlined-adornment-password"
                 type={showPassword ? "text" : "password"}
+                onChange={handlePasswordChange}
+                onBlur={validatePassword}
                 endAdornment={
                   <InputAdornment position="end">
                     <IconButton
@@ -214,7 +218,7 @@ export default function SignIn() {
               />
             </FormControl>
             <Button
-              disabled={signInDisabled() ? true : false}
+              disabled={checkDisableTrigger()}
               type="submit"
               fullWidth
               variant="contained"
