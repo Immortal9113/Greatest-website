@@ -4,6 +4,7 @@ import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
 import TextField from "@mui/material/TextField";
 import FormControlLabel from "@mui/material/FormControlLabel";
+import FormHelperText from "@mui/material/FormHelperText";
 import Checkbox from "@mui/material/Checkbox";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
@@ -14,6 +15,13 @@ import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import Alert from "@mui/material/Alert";
 import AlertTitle from "@mui/material/AlertTitle";
+import FormControl from "@mui/material/FormControl";
+import InputAdornment from "@mui/material/InputAdornment";
+import Visibility from "@mui/icons-material/Visibility";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import IconButton from "@mui/material/IconButton";
+import OutlinedInput from "@mui/material/OutlinedInput";
+import InputLabel from "@mui/material/InputLabel";
 import "../App.css";
 import axios from "axios";
 
@@ -49,9 +57,56 @@ const theme = createTheme({
 
 export default function SignIn() {
   const [error, setError] = React.useState(null);
-  const [login, setLogin] = React.useState("");
+  const [response, setResponse] = React.useState(null);
+  const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [showAlert, setShowAlert] = React.useState(false);
+  const [emailError, setEmailError] = React.useState(false);
+  const [passwordError, setPasswordError] = React.useState(false);
+  const [showPassword, setShowPassword] = React.useState(false);
+
+  const handleClickShowPassword = () => setShowPassword((show) => !show);
+
+  const handleMouseDownPassword = (event) => {
+    event.preventDefault();
+  };
+
+  const handleEmailChange = (event) => {
+    const value = event.target.value;
+    setEmail(value);
+    validateEmail(value);
+  };
+
+  const handlePasswordChange = (event) => {
+    const value = event.target.value;
+    setPassword(value);
+    validatePassword(value);
+  };
+
+  const validateEmail = (value) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(value)) {
+      setEmailError("Invalid email address");
+    } else {
+      setEmailError("");
+    }
+  };
+
+  const validatePassword = (value) => {
+    if (value.length >= 8 && value.length <= 32) {
+      setPasswordError("");
+    } else {
+      setPasswordError("Password must be at least 8 characters");
+    }
+  };
+
+  const checkDisableTrigger = () => {
+    if (emailError || passwordError || !password || !email) {
+      return true;
+    } else {
+      return false;
+    }
+  };
 
   const handlePasswordChange = (event) => {
     setPassword(event.target.value);
@@ -66,10 +121,10 @@ export default function SignIn() {
   const handleSubmit = (event) => {
     event.preventDefault();
 
-    if (!login || !password) {
+    if (!email || !password) {
       setShowAlert(true);
     }
-    const user = { username: login, password: password };
+    const user = { username: email, password: password };
     axios
       .post("http://192.168.68.185:5000/api/auth/login", user, {
         headers: {
@@ -121,6 +176,8 @@ export default function SignIn() {
             sx={{ mt: 1 }}
           >
             <TextField
+              error={emailError}
+              helperText={emailError}
               margin="normal"
               required
               fullWidth
@@ -129,24 +186,46 @@ export default function SignIn() {
               name="login"
               autoComplete="login"
               autoFocus
-              onChange={handleLoginChange}
+              onChange={handleEmailChange}
             />
-            <TextField
+            <FormControl
+              variant="outlined"
               margin="normal"
               required
               fullWidth
-              name="password"
-              label="Password"
-              type="password"
-              id="password"
-              autoComplete="current-password"
-              onChange={handlePasswordChange}
-            />
-            <FormControlLabel
-              control={<Checkbox value="remember" color="primary" />}
-              label="Remember me"
-            />
+              error={passwordError}
+              helperText={passwordError}
+            >
+              <InputLabel htmlFor="outlined-adornment-password">
+                Password
+              </InputLabel>
+              <OutlinedInput
+                inputProps={{ maxLength: 32 }}
+                id="outlined-adornment-password"
+                type={showPassword ? "text" : "password"}
+                onChange={handlePasswordChange}
+                endAdornment={
+                  <InputAdornment position="end">
+                    <IconButton
+                      aria-label="toggle password visibility"
+                      onClick={handleClickShowPassword}
+                      onMouseDown={handleMouseDownPassword}
+                      edge="end"
+                    >
+                      {showPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                }
+                label="Password"
+              />
+              <FormHelperText>{passwordError}</FormHelperText>
+              <FormControlLabel
+                control={<Checkbox value="remember" color="primary" />}
+                label="Remember me"
+              />
+            </FormControl>
             <Button
+              disabled={checkDisableTrigger()}
               type="submit"
               fullWidth
               variant="contained"
