@@ -57,7 +57,6 @@ const theme = createTheme({
 
 export default function SignIn() {
   const [error, setError] = React.useState(null);
-  const [response, setResponse] = React.useState(null);
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [showAlert, setShowAlert] = React.useState(false);
@@ -75,12 +74,14 @@ export default function SignIn() {
     const value = event.target.value;
     setEmail(value);
     validateEmail(value);
+    setShowAlert(false);
   };
 
   const handlePasswordChange = (event) => {
     const value = event.target.value;
     setPassword(value);
     validatePassword(value);
+    setShowAlert(false);
   };
 
   const validateEmail = (value) => {
@@ -108,31 +109,15 @@ export default function SignIn() {
     }
   };
 
-  const handlePasswordChange = (event) => {
-    setPassword(event.target.value);
-    setShowAlert(false);
-  };
-
-  const handleLoginChange = (event) => {
-    setLogin(event.target.value);
-    setShowAlert(false);
-  };
-
   const handleSubmit = (event) => {
     event.preventDefault();
-
-    if (!email || !password) {
-      setShowAlert(true);
-    }
+    setShowAlert(false);
     const user = { username: email, password: password };
     axios
-      .post("http://192.168.68.185:5000/api/auth/login", user, {
+      .post("http://192.168.68.185:3000/api/v1/sign-in", user, {
         headers: {
           "Content-Type": "application/json",
         },
-      })
-      .then((response) => {
-        setError(null);
       })
       .catch((error) => {
         if (error.response) {
